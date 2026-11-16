@@ -13,8 +13,8 @@ Kd2_sema = 0.38 # semaglutide (reference)
 L1 = 0.015      # GLP1 (fasting)
 L2 = np.logspace(-3, 2, 500)
 
-# Load the data (edit path as needed)
-data = np.loadtxt("cavalitide_data.csv", delimiter=",", skiprows=1)
+# Load the data 
+data = np.loadtxt("C:/Users/sarah/BME 2315/Module 3/Module_3/cavalitide_data.csv", delimiter=",", skiprows=1)
 L2_loaded, Fact_loaded = data[:, 0], data[:, 1]
 
 # Approach 1: brute force
