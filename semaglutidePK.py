@@ -28,7 +28,7 @@ products = {
     ),
 
     'Cavalitide': dict(
-        Favailable=0.01,
+        Favailable=0.01 , 
         ka=0.006,
         D=25,
         interval=24,
