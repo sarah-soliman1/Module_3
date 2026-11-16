@@ -38,7 +38,7 @@ plt.semilogx(L2, Fact(L1, L2, Kd1, Kd2_brute), ":", lw=2.5,
 plt.semilogx(L2, Fact(L1, L2, Kd1, Kd2_fit), "--", lw=2,
              label=f"curve_fit (Kd = {Kd2_fit:.3f} nM)")
 plt.semilogx(L2, Fact(L1, L2, Kd1, Kd2_sema), "-", lw=1.2, alpha=0.5,
-             label=f"semaglutide ref. (Kd = {Kd2_sema} nM)")
+             label=f"cavalitide ref. (Kd = {Kd2_sema} nM)")
 plt.ylim(-0.1, 1.1)
 plt.xlabel("[Cavalitide] (nM)")
 plt.ylabel("Fraction active receptors (Fact)")
