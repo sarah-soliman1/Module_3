@@ -129,7 +129,7 @@ t_cav, Asc_cav, Cc_cav = simulate(
 )
 
 plt.figure(figsize = (10,6))
-plt.plot(t / 24, Ffree*Cc_cav, label="Cavalitide 25mg Daily")
+plt.plot(t_cav / 24, Ffree*Cc_cav, label="Cavalitide 25mg Daily")
 plt.xlabel("Time (days)")
 plt.ylabel("Blood concentration [nM]")
 plt.title("Cavalitide: 25mg Daily")
