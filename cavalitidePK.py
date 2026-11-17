@@ -2,9 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 
-
-drug = 'Cavalitide'
+# ===== choose product: 'Ozempic' or 'Wegovy' =====
+drug = 'Ozempic'
 #drug = 'Wegovy'
+
 
 # product-specific parameters
 
@@ -48,7 +49,7 @@ MW = 4113.6     # g/mol
 Ffree = 0.01    # rest of semaglutide bound to albumin
 
 # simulation parameters
-dt = 0.1        # h, Euler step size
+dt = 0.1        # h, max intigration step size for solve_ivp
 
 def ODEfunc(t, y):
     Asc, Cc = y
@@ -91,20 +92,44 @@ def simulate(D, n_doses, interval, dt):
     return t, Asc_out, Cc_nM
 
 # --- run ---
-t, Asc, Cc = simulate(D, n_doses, interval, dt)
+# Ozempic
+p = products['Ozempic']
+Favailable = p["Favailable"]
+ka = p["ka"]
 
-# --- plot ---
-plt.plot(t / 24, Asc, label=f"{depot} depot [mg]")
-plt.plot(t / 24, Ffree*Cc, label="free in blood [nM]")
+t_oz, Asc_oz, Cc_oz = simulate(
+    p["D"], p['n_doses'], p['interval'], dt
+)
+
+# Wegovy
+p = products['Wegovy']
+Favailable = p['Favailable']
+ka = p['ka']
+
+t_we, Asc_we, Cc_we = simulate(
+    p['D'], p['n_doses'], p['interval'], dt
+)
+
+plt.figure(figsize = (10,6))
+plt.plot(t_oz / 24, Ffree*Cc_oz, label="Ozempic Weekly Injection")
+plt.plot(t_we / 24, Ffree*Cc_we, label="Wegovy Daily Pill")
 plt.xlabel("Time (days)")
-plt.ylabel("Cavalitide")
-plt.title(f"{drug}: {D} mg every {interval} h, {n_doses} doses")
+plt.ylabel("Free blood concentration (nM)")
+plt.title('Ozempic vs Wegovy')
 plt.legend()
 plt.grid(alpha=0.3)
 plt.show()
 
+p = products['Cavalitide']
+Favailable = p['Favailable']
+ka = p['ka']
+
+t_cav, Asc_cav, Cc_cav = simulate(
+    p['D'], p['n_doses'], p['interval'], dt
+)
+
 plt.figure(figsize = (10,6))
-plt.plot(t / 24, Ffree*Cc, label="Cavalitide free in blood [nM]")
+plt.plot(t / 24, Ffree*Cc_cav, label="Cavalitide 25mg Daily")
 plt.xlabel("Time (days)")
 plt.ylabel("Blood concentration [nM]")
 plt.title("Cavalitide: 25mg Daily")
@@ -112,8 +137,23 @@ plt.legend()
 plt.grid(alpha=0.3)
 plt.show()
 
+optimized_D = 20.8
+t_opt, Asc_opt, Cc_opt = simulate(
+    optimized_D, p['n_doses'], p['interval'], dt
+)
+
+last_interval = t_opt >= (t_opt[-1] - p['interval'])
+steady_state_avg = np.trapezoid(
+    Ffree * Cc_opt[last_interval],
+    t_opt[last_interval]
+) / p['interval']
+
+print("Optimized daily dose:", optimized_D, "mg")
+print("Average steady-state free concentration:",
+      round(steady_state_avg, 3), "nM")
+
 plt.figure(figsize = (10,6))
-plt.plot(t / 24, Ffree*Cc, label="Cavalitide 20.8mg Daily")
+plt.plot(t_opt / 24, Ffree*Cc_opt, label="Cavalitide 20.8mg Daily")
 plt.xlabel("Time (days)")
 plt.ylabel("Blood Concentration (nM)")
 plt.title("Optimized Cavalitide Dose")
